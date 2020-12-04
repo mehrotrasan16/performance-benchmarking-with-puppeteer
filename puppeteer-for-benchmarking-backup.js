@@ -9,8 +9,8 @@ var stream = fs.createWriteStream("./metrics.txt", {flags:'a'});
 var i = 0;
 
 (async () => {
-        const browser = await puppeteer.launch({headless:false});
-        for(i = 0; i < 1;i++) {
+        const browser = await puppeteer.launch();
+        for(i = 0; i < 5;i++) {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
 
@@ -18,33 +18,24 @@ var i = 0;
             await page.tracing.start({path: './profile_' + i.toString() + '.json'});
             // await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
             await page.goto('http://urban-sustain.org/aperture3/aperture-client/', {waitUntil: 'load', timeout: 0});
-            // await page.waitFor(1000);
 
+            //Code to check if we can find an element by its selector
+            // try {
+            //     await page.waitForSelector('#sidebar > div.sidebar-tabs > ul > li > a')
+            // } catch (error) {
+            //     console.log("The element didn't appear.")
+            // }
             //Code to dig into the iframe and select a fire station checkbox
             try{
-                await page.waitForSelector("iframe");
-                const elementHandle = await page.$('#mMap2 > iframe');
-                const frame = await elementHandle.contentFrame();
-                const firestation = await frame.$('_childFrames');
-                console.log(frame)
-                console.log(firestation)
-                // var iframeels =  await page.evaluate(() => {
-                //     var iframedom = document.querySelectorAll("iframe");
-                //     return iframedom;
-                //     //return iframedom[0].contentWindow.document.getElementsByTagName("*");
-                // });
-                //     //await page.$$('#mMap2 > iframe')
-                // console.log(iframeels)
-                // console.log(iframe[0].contentWindow.document.getElementsByName('#river_layer_selector'))
+                var iframe = document.querySelectorAll("iframe");
                 //look for #fire_station_layer_selector
                 // await page.waitForSelector('#fire_station_layer_selector').then(() => {
                 //     console.log('found fire station');
                 //     // page.$('#fire_station_layer_selector').checked = true
                 // });
             } catch (error){
-                console.log("iframe/element related error" + error.toString());
+                console.log("iframe/element related error")
             }
-
             //Code to open the menu and select a layer checkbox - e.g. the Fire Station checkboxes.
             // await page.evaluate(() => {
             //     var el = document.querySelectorAll("a[href='#home']");
@@ -53,8 +44,6 @@ var i = 0;
             //     var el = document.getElementById('fire_station_layer_selector');
             //     el.checked = true;
             // });
-
-
 
             const performanceTiming = JSON.parse(
                 await page.evaluate(() => JSON.stringify(window.performance.timing))
