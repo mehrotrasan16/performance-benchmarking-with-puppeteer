@@ -1,0 +1,18 @@
+{
+  "name": "puppetteer_automation",
+  "version": "1.0.0",
+  "description": "automation for running metric tests on my leaflet map using puppetteer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sanketm",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^5.5.0"
+  },
+  "devDependencies": {
+    "chrome-timeline": "0.0.13",
+    "tracealyzer": "^0.10.3"
+  }
+}
