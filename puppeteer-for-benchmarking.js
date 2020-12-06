@@ -52,16 +52,6 @@ var i = 0;
             filename = filename + '_run_' + i.toString() + '.json';
             var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
             stream1.write(JSON.stringify(metrics));
-
-            // console.log(metrics['profiling']['categories']);
-            // console.log(metrics['profiling']['events']);
-            // console.log(metrics['rendering']);
-            // stream1.write(JSON.stringify(metrics['profiling']['categories']).toString());
-            // stream1.write("\n");
-            // stream1.write(JSON.stringify(metrics['profiling']['events']).toString());
-            // stream1.write("\n");
-            // stream1.write(JSON.stringify(metrics['rendering']).toString());
-            // stream1.write("\n--------------------\n")
         }
         await browser.close();
     })();
