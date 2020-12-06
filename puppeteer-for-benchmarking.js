@@ -9,11 +9,11 @@ const tracepath = "./tracelyzer/";
 const windowperfpath = "./window.performance.timing/";
 const pagemetricspath = "./page.metrics/";
 const perfgetmetricspath = "./performance.getmetrics/";
-const filename = '20-state-metrics.txt'
-var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
-var stream2 = fs.createWriteStream(windowperfpath+filename, {flags:'a'});
-var stream3 = fs.createWriteStream(pagemetricspath+filename, {flags:'a'});
-var stream4 = fs.createWriteStream(perfgetmetricspath+filename, {flags:'a'});
+let filename = '1-state-metrics';
+// var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
+// var stream2 = fs.createWriteStream(windowperfpath+filename, {flags:'a'});
+// var stream3 = fs.createWriteStream(pagemetricspath+filename, {flags:'a'});
+// var stream4 = fs.createWriteStream(perfgetmetricspath+filename, {flags:'a'});
 
 var i = 0;
 
@@ -45,59 +45,23 @@ var i = 0;
             //     console.log("iframe/element related error" + error.toString());
             // }
 
-            // const performanceTiming = JSON.parse(
-            //     await page.evaluate(() => JSON.stringify(window.performance.timing))
-            // );
-            // stream4.write(JSON.stringify(performanceTiming));
-            // stream4.write("\n")
-            // console.log(performanceTiming);
-
-            // let
-            //     dns  = performanceTiming.domainLookupEnd - performanceTiming.domainLookupStart,
-            //     tcp  = performanceTiming.connectEnd - performanceTiming.connectStart,
-            //     // ssl = performanceTiming.requestStart - performanceTiming.secureConnectionStart,
-            //     waitingTime = performanceTiming.responseStart - performanceTiming.requestStart,
-            //     contentTime = performanceTiming.responseEnd - performanceTiming.responseStart,
-            //     networkTime = (dns + tcp + waitingTime + contentTime),
-            //     pageloadTime = performanceTiming.loadEventStart - performanceTiming.navigationStart;
-
-            // console.log("\n\n");
-            // console.log("DNS Lookup time: " + dns.toString());
-            // console.log("TCP Handshake time: " + tcp.toString());
-            // console.log("Network Handshake time: " + networkTime.toString());
-            // console.log("Page Load time: " + pageloadTime.toString());
-
-            // await page._client.send('Performance.enable');
-            // const performanceMetrics = await page._client.send('Performance.getMetrics');
-            // // console.log("\n\n\n");
-            // // console.log(performanceMetrics);
-            // // performanceMetrics['metrics'].forEach((m) => {
-            // //     stream.write(JSON.stringify(m).toString());
-            // // })
-            // stream3.write(JSON.stringify(performanceMetrics['metrics']));
-            // stream3.write("\n")
-
-            // const perf = await page.metrics();
-            // // console.log(JSON.parse(JSON.stringify(perf)));
-            // stream2.write(JSON.stringify(perf));
-            // stream2.write("\n")
-
             await page.tracing.stop();
             await context.close();
             const metrics = tracealyzer('./profile_' + i.toString() + '.json');
+
+            filename = filename + '_run_' + i.toString() + '.json';
+            var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
+            stream1.write(JSON.stringify(metrics));
+
             // console.log(metrics['profiling']['categories']);
             // console.log(metrics['profiling']['events']);
             // console.log(metrics['rendering']);
-            stream1.write(JSON.stringify(metrics['profiling']['categories']).toString());
-            stream1.write("\n");
-            stream1.write(JSON.stringify(metrics['profiling']['events']).toString());
-            stream1.write("\n");
-            stream1.write(JSON.stringify(metrics['rendering']).toString());
-            stream1.write("--------------------")
-
-            // await context.close();
+            // stream1.write(JSON.stringify(metrics['profiling']['categories']).toString());
+            // stream1.write("\n");
+            // stream1.write(JSON.stringify(metrics['profiling']['events']).toString());
+            // stream1.write("\n");
+            // stream1.write(JSON.stringify(metrics['rendering']).toString());
+            // stream1.write("\n--------------------\n")
         }
         await browser.close();
     })();
-
-// stream.close();
