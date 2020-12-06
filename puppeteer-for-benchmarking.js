@@ -45,21 +45,21 @@ var i = 0;
             //     console.log("iframe/element related error" + error.toString());
             // }
 
-            const performanceTiming = JSON.parse(
-                await page.evaluate(() => JSON.stringify(window.performance.timing))
-            );
-            stream4.write(JSON.stringify(performanceTiming));
-            stream4.write("\n")
+            // const performanceTiming = JSON.parse(
+            //     await page.evaluate(() => JSON.stringify(window.performance.timing))
+            // );
+            // stream4.write(JSON.stringify(performanceTiming));
+            // stream4.write("\n")
             // console.log(performanceTiming);
 
-            let
-                dns  = performanceTiming.domainLookupEnd - performanceTiming.domainLookupStart,
-                tcp  = performanceTiming.connectEnd - performanceTiming.connectStart,
-                // ssl = performanceTiming.requestStart - performanceTiming.secureConnectionStart,
-                waitingTime = performanceTiming.responseStart - performanceTiming.requestStart,
-                contentTime = performanceTiming.responseEnd - performanceTiming.responseStart,
-                networkTime = (dns + tcp + waitingTime + contentTime),
-                pageloadTime = performanceTiming.loadEventStart - performanceTiming.navigationStart;
+            // let
+            //     dns  = performanceTiming.domainLookupEnd - performanceTiming.domainLookupStart,
+            //     tcp  = performanceTiming.connectEnd - performanceTiming.connectStart,
+            //     // ssl = performanceTiming.requestStart - performanceTiming.secureConnectionStart,
+            //     waitingTime = performanceTiming.responseStart - performanceTiming.requestStart,
+            //     contentTime = performanceTiming.responseEnd - performanceTiming.responseStart,
+            //     networkTime = (dns + tcp + waitingTime + contentTime),
+            //     pageloadTime = performanceTiming.loadEventStart - performanceTiming.navigationStart;
 
             // console.log("\n\n");
             // console.log("DNS Lookup time: " + dns.toString());
@@ -67,20 +67,20 @@ var i = 0;
             // console.log("Network Handshake time: " + networkTime.toString());
             // console.log("Page Load time: " + pageloadTime.toString());
 
-            await page._client.send('Performance.enable');
-            const performanceMetrics = await page._client.send('Performance.getMetrics');
-            // console.log("\n\n\n");
-            // console.log(performanceMetrics);
-            // performanceMetrics['metrics'].forEach((m) => {
-            //     stream.write(JSON.stringify(m).toString());
-            // })
-            stream3.write(JSON.stringify(performanceMetrics['metrics']));
-            stream3.write("\n")
+            // await page._client.send('Performance.enable');
+            // const performanceMetrics = await page._client.send('Performance.getMetrics');
+            // // console.log("\n\n\n");
+            // // console.log(performanceMetrics);
+            // // performanceMetrics['metrics'].forEach((m) => {
+            // //     stream.write(JSON.stringify(m).toString());
+            // // })
+            // stream3.write(JSON.stringify(performanceMetrics['metrics']));
+            // stream3.write("\n")
 
-            const perf = await page.metrics();
-            // console.log(JSON.parse(JSON.stringify(perf)));
-            stream2.write(JSON.stringify(perf));
-            stream2.write("\n")
+            // const perf = await page.metrics();
+            // // console.log(JSON.parse(JSON.stringify(perf)));
+            // stream2.write(JSON.stringify(perf));
+            // stream2.write("\n")
 
             await page.tracing.stop();
             await context.close();
