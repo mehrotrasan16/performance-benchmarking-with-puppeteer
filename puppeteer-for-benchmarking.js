@@ -5,62 +5,51 @@ const fs = require('fs')
 const tracealyzer = require('tracealyzer');
 const { performance, PerformanceObserver} = require('perf_hooks')
 
-var stream = fs.createWriteStream("./metrics.txt", {flags:'a'});
+const tracepath = "./tracelyzer/";
+const windowperfpath = "./window.performance.timing/";
+const pagemetricspath = "./page.metrics/";
+const perfgetmetricspath = "./performance.getmetrics/";
+const filename = '20-state-metrics.txt'
+var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
+var stream2 = fs.createWriteStream(windowperfpath+filename, {flags:'a'});
+var stream3 = fs.createWriteStream(pagemetricspath+filename, {flags:'a'});
+var stream4 = fs.createWriteStream(perfgetmetricspath+filename, {flags:'a'});
+
 var i = 0;
 
 (async () => {
-        const browser = await puppeteer.launch({headless:false});
-        for(i = 0; i < 1;i++) {
+        const browser = await puppeteer.launch();
+        for(i = 0; i < 10;i++) {
             const context = await browser.createIncognitoBrowserContext();
             const page = await context.newPage();
 
 
             await page.tracing.start({path: './profile_' + i.toString() + '.json'});
-            // await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
-            await page.goto('http://urban-sustain.org/aperture3/aperture-client/', {waitUntil: 'load', timeout: 0});
+            await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
+            // await page.goto('http://urban-sustain.org/aperture3/aperture-client/', {waitUntil: 'load', timeout: 0});
             // await page.waitFor(1000);
 
-            //Code to dig into the iframe and select a fire station checkbox
-            try{
-                await page.waitForSelector("iframe");
-                const elementHandle = await page.$('#mMap2 > iframe');
-                const frame = await elementHandle.contentFrame();
-                const firestation = await frame.$('_childFrames');
-                console.log(frame)
-                console.log(firestation)
-                // var iframeels =  await page.evaluate(() => {
-                //     var iframedom = document.querySelectorAll("iframe");
-                //     return iframedom;
-                //     //return iframedom[0].contentWindow.document.getElementsByTagName("*");
-                // });
-                //     //await page.$$('#mMap2 > iframe')
-                // console.log(iframeels)
-                // console.log(iframe[0].contentWindow.document.getElementsByName('#river_layer_selector'))
-                //look for #fire_station_layer_selector
-                // await page.waitForSelector('#fire_station_layer_selector').then(() => {
-                //     console.log('found fire station');
-                //     // page.$('#fire_station_layer_selector').checked = true
-                // });
-            } catch (error){
-                console.log("iframe/element related error" + error.toString());
-            }
-
-            //Code to open the menu and select a layer checkbox - e.g. the Fire Station checkboxes.
-            // await page.evaluate(() => {
-            //     var el = document.querySelectorAll("a[href='#home']");
-            //     console.log(el);
-            //     el.click();
-            //     var el = document.getElementById('fire_station_layer_selector');
-            //     el.checked = true;
-            // });
-
-
+            // //Code to dig into the iframe and select a fire station checkbox
+            // let myFrame;
+            // try{
+            //     for (const frame of page.mainFrame().childFrames()){
+            //         // Here you can use few identifying methods like url(),name(),title()
+            //         if (frame.url().includes('map2.html')){
+            //             console.log('we found the map2 iframe')
+            //             myFrame = frame
+            //             // we assign this frame to myFrame to use it later
+            //         }
+            //     }
+            //
+            // } catch (error){
+            //     console.log("iframe/element related error" + error.toString());
+            // }
 
             const performanceTiming = JSON.parse(
                 await page.evaluate(() => JSON.stringify(window.performance.timing))
             );
-            stream.write(JSON.stringify(performanceTiming));
-            stream.write("\n")
+            stream4.write(JSON.stringify(performanceTiming));
+            stream4.write("\n")
             // console.log(performanceTiming);
 
             let
@@ -85,13 +74,13 @@ var i = 0;
             // performanceMetrics['metrics'].forEach((m) => {
             //     stream.write(JSON.stringify(m).toString());
             // })
-            stream.write(JSON.stringify(performanceMetrics['metrics']));
-            stream.write("\n")
+            stream3.write(JSON.stringify(performanceMetrics['metrics']));
+            stream3.write("\n")
 
             const perf = await page.metrics();
             // console.log(JSON.parse(JSON.stringify(perf)));
-            stream.write(JSON.stringify(perf));
-            stream.write("\n")
+            stream2.write(JSON.stringify(perf));
+            stream2.write("\n")
 
             await page.tracing.stop();
             await context.close();
@@ -99,14 +88,12 @@ var i = 0;
             // console.log(metrics['profiling']['categories']);
             // console.log(metrics['profiling']['events']);
             // console.log(metrics['rendering']);
-            stream.write(JSON.stringify(metrics['profiling']['categories']).toString());
-            stream.write("\n");
-            stream.write(JSON.stringify(metrics['profiling']['events']).toString());
-            stream.write("\n");
-            stream.write(JSON.stringify(metrics['rendering']).toString());
-            // stream.write(JSON.stringify(metrics['profiling']['functions']).toString());
-            // stream.write(JSON.stringify(metrics['profiling']['userFunctions']).toString());
-            stream.write("\n\n\n\n\n")
+            stream1.write(JSON.stringify(metrics['profiling']['categories']).toString());
+            stream1.write("\n");
+            stream1.write(JSON.stringify(metrics['profiling']['events']).toString());
+            stream1.write("\n");
+            stream1.write(JSON.stringify(metrics['rendering']).toString());
+            stream1.write("--------------------")
 
             // await context.close();
         }
