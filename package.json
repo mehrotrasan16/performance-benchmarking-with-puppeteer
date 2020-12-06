@@ -9,6 +9,7 @@
   "author": "sanketm",
   "license": "ISC",
   "dependencies": {
+    "findit": "^2.0.0",
     "puppeteer": "^5.5.0"
   },
   "devDependencies": {
