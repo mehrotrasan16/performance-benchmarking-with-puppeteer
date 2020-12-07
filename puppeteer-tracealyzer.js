@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs')
 const tracealyzer = require('tracealyzer');
 const { performance, PerformanceObserver} = require('perf_hooks')
+var mergeJSON = require("merge-json") ;
 
 let starttime = Date.now()
 console.log(starttime);
@@ -11,11 +12,11 @@ console.log(starttime);
 
 const tracepath = "./tracelyzer/";
 const windowperfpath = "./window.performance.timing/";
-// const pagemetricspath = "./page.metrics/";
-// const perfgetmetricspath = "./performance.getmetrics/";
-const major_filename = '4-state-metrics';
+const pagemetricspath = "./page.metrics/";
+const perfgetmetricspath = "./performance.getmetrics/";
+
 // var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
-var stream2 = fs.createWriteStream(windowperfpath+major_filename, {flags:'a'});
+// var stream2 = fs.createWriteStream(windowperfpath+major_filename+".json", {flags:'a'});
 // var stream3 = fs.createWriteStream(pagemetricspath+filename, {flags:'a'});
 // var stream4 = fs.createWriteStream(perfgetmetricspath+filename, {flags:'a'});
 
@@ -23,7 +24,7 @@ var i = 0;
 
 (async () => {
     const browser = await puppeteer.launch();
-    for(i = 0; i < 10;i++) {
+    for(i = 0; i < 1;i++) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
 
@@ -48,12 +49,17 @@ var i = 0;
         // } catch (error){
         //     console.log("iframe/element related error" + error.toString());
         // }
-        const performanceTiming = JSON.parse(
-            await page.evaluate(() => JSON.stringify(window.performance.timing))
-        );
-        stream2.write(JSON.stringify(performanceTiming));
-        stream2.write("------")
-        // console.log(performanceTiming);
+
+        await page._client.send('Performance.enable');
+        const performanceMetrics = await page._client.send('Performance.getMetrics');
+
+        let shapecount = await page.evaluate(() => {
+            var x = document.getElementsByClassName("legend");
+            shapecount = x[0].innerHTML.split(",")[0].split('>')[3];
+            return shapecount;
+        });
+        console.log( "Shape count: ", shapecount);
+        const major_filename = shapecount == ""?'loadsof':shapecount.toString() + '-state-metrics';
 
         await page.tracing.stop();
         await context.close();
@@ -61,9 +67,15 @@ var i = 0;
 
         const filename = major_filename + '_run_' + i.toString() + '.json';
         var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
-        stream1.write(JSON.stringify(metrics));
+        var result = mergeJSON.merge(metrics,performanceMetrics)
+        stream1.write(JSON.stringify(result));
         stream1.close();
-        console.log(Date.now() - starttime)
+
+
+        // var stream3 = fs.createWriteStream(perfgetmetricspath + major_filename + '_run_' + i.toString()+ ".json", {flags:'a'});
+        // stream3.write(JSON.stringify(performanceMetrics));
+        // stream3.close();
+        console.log("Time Taken for " + i.toString() + "th run for "+ shapecount +": ", Date.now() - starttime)
     }
     await browser.close();
 })();
@@ -104,17 +116,3 @@ fromDir('./',/profile\_/,function(filename){
         }//file removed
     })
 });
-
-// fs.access(path, fs.F_OK, (err) => {
-//     if (err) {
-//         console.error(err)
-//         return
-//     }
-//     //file exists
-//     fs.unlink(path, (err) => {
-//         if (err) {
-//             console.error(err)
-//             return
-//         }//file removed
-//     })
-// })

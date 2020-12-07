@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "findit": "^2.0.0",
+    "merge-json": "0.1.0-b.3",
     "puppeteer": "^5.5.0"
   },
   "devDependencies": {
