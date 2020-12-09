@@ -27,13 +27,14 @@ var i = 0;
         // console.log(performanceTiming);
 
         // let
-        //     dns  = performanceTiming.domainLookupEnd - performanceTiming.domainLookupStart,
-        //     tcp  = performanceTiming.connectEnd - performanceTiming.connectStart,
-        //     ssl = performanceTiming.requestStart - performanceTiming.secureConnectionStart,
-        //     waitingTime = performanceTiming.responseStart - performanceTiming.requestStart,
-        //     contentTime = performanceTiming.responseEnd - performanceTiming.responseStart,
-        //     networkTime = (dns + tcp + waitingTime + contentTime),
-        //     pageloadTime = performanceTiming.loadEventStart - performanceTiming.navigationStart;
+            dns  = performanceTiming.domainLookupEnd - performanceTiming.domainLookupStart,
+            tcp  = performanceTiming.connectEnd - performanceTiming.connectStart,
+            ssl = performanceTiming.requestStart - performanceTiming.secureConnectionStart,
+            waitingTime = performanceTiming.responseStart - performanceTiming.requestStart,
+            contentTime = performanceTiming.responseEnd - performanceTiming.responseStart,
+                requestTime = performanceTiming.responseEnd - performanceTiming.requestStart,
+            networkTime = (dns + tcp + waitingTime + contentTime),
+            pageloadTime = performanceTiming.loadEventStart - performanceTiming.navigationStart;
         //
         // console.log("\n\n");
         // console.log("DNS Lookup time: " + dns.toString());

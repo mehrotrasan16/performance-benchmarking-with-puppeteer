@@ -24,7 +24,7 @@ var i = 0;
 
 (async () => {
     const browser = await puppeteer.launch();
-    for(i = 0; i < 1;i++) {
+    for(i = 0; i < 5;i++) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
 
