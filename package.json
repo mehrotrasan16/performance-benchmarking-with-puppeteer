@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "chrome-timeline": "0.0.13",
+    "geojson-random": "^0.5.0",
     "tracealyzer": "^0.10.3"
   }
 }

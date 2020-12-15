@@ -6,6 +6,7 @@ const tracealyzer = require('tracealyzer');
 const { performance, PerformanceObserver} = require('perf_hooks')
 var mergeJSON = require("merge-json") ;
 
+
 let starttime = Date.now()
 console.log(starttime);
 
@@ -27,7 +28,6 @@ var i = 0;
     for(i = 0; i < 5;i++) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
-
 
         await page.tracing.start({path: './profile_' + i.toString() + '.json'});
         await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
@@ -53,6 +53,10 @@ var i = 0;
         await page._client.send('Performance.enable');
         const performanceMetrics = await page._client.send('Performance.getMetrics');
 
+        const performanceTiming = JSON.parse(
+            await page.evaluate(() => JSON.stringify(window.performance.timing))
+        );
+
         let shapecount = await page.evaluate(() => {
             var x = document.getElementsByClassName("legend");
             shapecount = x[0].innerHTML.split(",")[0].split('>')[3];
@@ -60,6 +64,7 @@ var i = 0;
         });
         console.log( "Shape count: ", shapecount);
         const major_filename = shapecount == ""?'loadsof':shapecount.toString() + '-state-metrics';
+        //const major_filename="Urban-Sustain-Test.";
 
         await page.tracing.stop();
         await context.close();
@@ -68,6 +73,7 @@ var i = 0;
         const filename = major_filename + '_run_' + i.toString() + '.json';
         var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
         var result = mergeJSON.merge(metrics,performanceMetrics)
+        var result = mergeJSON.merge(result,performanceTiming)
         stream1.write(JSON.stringify(result));
         stream1.close();
 
