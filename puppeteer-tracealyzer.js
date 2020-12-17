@@ -53,9 +53,14 @@ var i = 0;
         await page._client.send('Performance.enable');
         const performanceMetrics = await page._client.send('Performance.getMetrics');
 
-        const performanceTiming = JSON.parse(
-            await page.evaluate(() => JSON.stringify(window.performance.timing))
-        );
+        // const performanceTiming = JSON.parse(
+        //     await page.evaluate(() => JSON.stringify(window.performance.timing))
+        // );
+        const performanceTiming = await page.evaluate(() => JSON.stringify(window.performance.timing));
+        let perfvar = {}
+        perfvar.performanceTiming = performanceTiming
+        let perfJSON = JSON.parse(JSON.stringify(perfvar));
+
 
         let shapecount = await page.evaluate(() => {
             var x = document.getElementsByClassName("legend");
@@ -73,7 +78,7 @@ var i = 0;
         const filename = major_filename + '_run_' + i.toString() + '.json';
         var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
         var result = mergeJSON.merge(metrics,performanceMetrics)
-        var result = mergeJSON.merge(result,performanceTiming)
+        var result = mergeJSON.merge(result,perfJSON)
         stream1.write(JSON.stringify(result));
         stream1.close();
 
