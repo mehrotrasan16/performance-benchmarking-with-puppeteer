@@ -11,7 +11,7 @@ function get_lines(num_lines){
 }
 
 function get_shapes(num_shapes){
-    let geojson_fc = random.polygon(num_shapes,5,10,Math.PI/8,[-60.95, 25.84 , -130.67, 49.38]); //WSEN
+    let geojson_fc = random.polygon(num_shapes,5,10,[-60.95, 25.84 , -130.67, 49.38]); //WSEN
     return geojson_fc;
 }
 

@@ -25,7 +25,7 @@ var i = 0;
 
 (async () => {
     const browser = await puppeteer.launch();
-    for(i = 0; i < 5;i++) {
+    for(i = 0; i < 10;i++) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
 
@@ -39,7 +39,7 @@ var i = 0;
         // try{
         //     for (const frame of page.mainFrame().childFrames()){
         //         // Here you can use few identifying methods like url(),name(),title()
-        //         if (frame.url().includes('map2.html')){
+        //         if (frame.url().includes ('map2.html')){
         //             console.log('we found the map2 iframe')
         //             myFrame = frame
         //             // we assign this frame to myFrame to use it later
@@ -79,7 +79,7 @@ var i = 0;
         var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
         var result = mergeJSON.merge(metrics,performanceMetrics)
         var result = mergeJSON.merge(result,perfJSON)
-        stream1.write(JSON.stringify(result));
+        // stream1.write(JSON.stringify(result));
         stream1.close();
 
 
