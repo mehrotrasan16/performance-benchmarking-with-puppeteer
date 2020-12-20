@@ -32,7 +32,7 @@ var i = 0;
             ssl = performanceTiming.requestStart - performanceTiming.secureConnectionStart,
             waitingTime = performanceTiming.responseStart - performanceTiming.requestStart,
             contentTime = performanceTiming.responseEnd - performanceTiming.responseStart,
-                requestTime = performanceTiming.responseEnd - performanceTiming.requestStart,
+            requestTime = performanceTiming.responseEnd - performanceTiming.requestStart,
             networkTime = (dns + tcp + waitingTime + contentTime),
             pageloadTime = performanceTiming.loadEventStart - performanceTiming.navigationStart;
         //

@@ -24,7 +24,7 @@ const perfgetmetricspath = "./performance.getmetrics/";
 var i = 0;
 
 (async () => {
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch();
     for(i = 0; i < 10;i++) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
@@ -33,10 +33,7 @@ var i = 0;
         await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
         // await page.goto('http://urban-sustain.org/aperture3/aperture-client/', {waitUntil: 'load', timeout: 0});
         // await page.waitFor(1000);
-        let x = await page.evaluate((i) =>{
-                getLoadPoints(4);
-            },i
-        );
+
 
         // //Code to dig into the iframe and select a fire station checkbox
         // let myFrame;
@@ -56,7 +53,6 @@ var i = 0;
 
         await page._client.send('Performance.enable');
         const performanceMetrics = await page._client.send('Performance.getMetrics');
-        console.log(performanceMetrics.metrics)
 
         // const performanceTiming = JSON.parse(
         //     await page.evaluate(() => JSON.stringify(window.performance.timing))
@@ -66,7 +62,6 @@ var i = 0;
         perfvar.performanceTiming = performanceTiming
         let perfJSON = JSON.parse(JSON.stringify(perfvar));
 
-        await page.tracing.stop();
 
         let shapecount = await page.evaluate(() => {
             var x = document.getElementsByClassName("legend");
@@ -75,17 +70,23 @@ var i = 0;
         });
         console.log( "Shape count: ", shapecount);
         const major_filename = shapecount == ""?'loadsof':shapecount.toString() + '-state-metrics';
-        await context.close();
+        //const major_filename="Urban-Sustain-Test.";
 
+        await page.tracing.stop();
+        await context.close();
         const metrics = tracealyzer('./profile_' + i.toString() + '.json');
 
         const filename = major_filename + '_run_' + i.toString() + '.json';
         var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
         var result = mergeJSON.merge(metrics,performanceMetrics)
         var result = mergeJSON.merge(result,perfJSON)
-        stream1.write(JSON.stringify(result));
+        // stream1.write(JSON.stringify(result));
         stream1.close();
 
+
+        // var stream3 = fs.createWriteStream(perfgetmetricspath + major_filename + '_run_' + i.toString()+ ".json", {flags:'a'});
+        // stream3.write(JSON.stringify(performanceMetrics));
+        // stream3.close();
         console.log("Time Taken for " + i.toString() + "th run for "+ shapecount +": ", Date.now() - starttime)
     }
     await browser.close();
