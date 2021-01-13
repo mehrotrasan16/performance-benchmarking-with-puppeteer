@@ -27,7 +27,7 @@ async function asyncCall(num_point_files=1) {
     let starttime = Date.now()
     var major_filename,shapecount;
     const browser = await puppeteer.launch(); //{headless: false}
-    for(i = 0; i < 10;i++) {
+    for(i = 0; i < 3;i++) {
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
 
@@ -41,6 +41,7 @@ async function asyncCall(num_point_files=1) {
                 // getLoadShapes(num_point_files);
             },num_point_files
         );
+        // await page.waitFor(1000*(num_point_files/10);
 
         // //Code to dig into the iframe and select a fire station checkbox
         // let myFrame;
@@ -143,9 +144,9 @@ let rangelist = [];
 
 
 (async () =>{
-    for(var i = 1; i <= 50; i++){
+    for(var i = 35; i <= 40; i++){
+        console.log(i);
         let x = await asyncCall(i);
-        console.log(i, x);
     }
     console.log("Total Time Taken for " + i.toString() + "shape simulations, traces, metric measurements and writing to file:" , Date.now() - progstarttime)
 })();
