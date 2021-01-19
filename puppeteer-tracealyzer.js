@@ -28,20 +28,22 @@ async function asyncCall(num_point_files=1) {
     var major_filename,shapecount;
     const browser = await puppeteer.launch(); //{headless: false}
     for(i = 0; i < 3;i++) {
+
         const context = await browser.createIncognitoBrowserContext();
         const page = await context.newPage();
 
         await page.tracing.start({path: './profile_' + i.toString() + '.json'});
-        await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
-        // await page.goto('http://urban-sustain.org/aperture3/aperture-client/', {waitUntil: 'load', timeout: 0});
-        // await page.waitFor(1000);
+
+        //await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
+        await page.goto('http://localhost:63342/aperture/', {waitUntil: 'load', timeout: 0});
+
         let x = await page.evaluate((num_point_files) =>{
-                // getLoadPoints(num_point_files);
-                getLoadData(num_point_files);
+                getLoadPoints(num_point_files);
+                // getLoadData(num_point_files);
                 // getLoadShapes(num_point_files);
             },num_point_files
         );
-        // await page.waitFor(1000*(num_point_files/10);
+        await page.waitFor(1000*(num_point_files/10));
 
         // //Code to dig into the iframe and select a fire station checkbox
         // let myFrame;
@@ -144,7 +146,7 @@ let rangelist = [];
 
 
 (async () =>{
-    for(var i = 35; i <= 40; i++){
+    for(var i = 13; i <= 17; i++){
         console.log(i);
         let x = await asyncCall(i);
     }
