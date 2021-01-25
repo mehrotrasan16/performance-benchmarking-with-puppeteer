@@ -34,15 +34,16 @@ async function asyncCall(num_point_files=1) {
 
         await page.tracing.start({path: './profile_' + i.toString() + '.json'});
 
-        //await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
-        await page.goto('http://localhost:63342/aperture/', {waitUntil: 'load', timeout: 0});
+        await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
+        // await page.goto('http://localhost:63342/aperture/', {waitUntil: 'load', timeout: 0});
 
         let x = await page.evaluate((num_point_files) =>{
                 getLoadPoints(num_point_files);
                 // getLoadData(num_point_files);
-                // getLoadShapes(num_point_files);
+                getLoadShapes(num_point_files);
             },num_point_files
         );
+        console.log("Lag: " + ((num_point_files/10)*1000).toString())
         await page.waitFor(1000*(num_point_files/10));
 
         // //Code to dig into the iframe and select a fire station checkbox
@@ -146,7 +147,7 @@ let rangelist = [];
 
 
 (async () =>{
-    for(var i = 13; i <= 17; i++){
+    for(var i = 1; i <= 50; i++){
         console.log(i);
         let x = await asyncCall(i);
     }
